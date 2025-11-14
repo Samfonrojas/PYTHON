@@ -91,19 +91,19 @@ const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
           </button>
         <div className="flex items-center gap-3">
             <button
+                onClick={onNextLesson}
+                disabled={!isCorrect || isLoading}
+                className="bg-cyan-600 hover:bg-cyan-700 disabled:bg-cyan-800 disabled:text-bunker-400 disabled:cursor-not-allowed text-white font-semibold px-4 py-2 rounded-md transition duration-200"
+            >
+                {t('editor.nextLesson')}
+            </button>
+            <button
                 onClick={handleRun}
                 disabled={isLoading}
                 className="flex items-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-green-900 disabled:cursor-not-allowed text-white font-semibold px-4 py-2 rounded-md transition duration-200"
             >
                 <PlayIcon className="w-5 h-5" />
                 {isLoading ? t('editor.running') : t('editor.run')}
-            </button>
-            <button
-                onClick={onNextLesson}
-                disabled={!isCorrect || isLoading}
-                className="bg-cyan-600 hover:bg-cyan-700 disabled:bg-cyan-800 disabled:text-bunker-400 disabled:cursor-not-allowed text-white font-semibold px-4 py-2 rounded-md transition duration-200"
-            >
-                {t('editor.nextLesson')}
             </button>
         </div>
       </div>
