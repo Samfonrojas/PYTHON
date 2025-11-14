@@ -1,0 +1,5 @@
+{
+  "name": "Python Coder Academy",
+  "description": "An interactive, Codecademy-style application for learning the fundamentals of Python. It features AI-generated lessons, a live code editor with AI-powered feedback, and a chatbot for assistance, all in a classic split-screen learning environment.",
+  "requestFramePermissions": []
+}
