@@ -10,16 +10,51 @@ interface LessonPanelProps {
 }
 
 const parseMarkdown = (text: string) => {
-    return text
-        .replace(/```python\n([\s\S]*?)```/g, '<pre class="bg-bunker-900 text-sm text-cyan-300 p-4 rounded-md overflow-x-auto my-4"><code class="language-python">$1</code></pre>')
-        .replace(/`([^`]+)`/g, '<code class="bg-bunker-700 text-cyan-400 rounded px-1 py-0.5 text-sm">$1</code>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold mt-6 mb-3 text-white">$1</h1>')
-        .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold mt-5 mb-2 text-white">$1</h2>')
-        .replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold mt-4 mb-2 text-bunker-100">$1</h3>')
-        .replace(/- (.*$)/gim, '<li class="ml-6">$1</li>')
-        .replace(/\n/g, '<br />');
+    let html = text;
+
+    html = html.replace(/```python\n([\s\S]*?)```/g, '<pre class="bg-bunker-900 text-sm text-cyan-300 p-4 rounded-md overflow-x-auto my-4"><code>$1</code></pre>');
+    html = html.replace(/```([\s\S]*?)```/g, '<pre class="bg-bunker-900 text-sm text-cyan-300 p-4 rounded-md overflow-x-auto my-4"><code>$1</code></pre>');
+
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>');
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+    html = html.replace(/^### (.*?)$/gm, '<h3 class="text-xl font-bold mt-4 mb-3 text-cyan-300">$1</h3>');
+    html = html.replace(/^## (.*?)$/gm, '<h2 class="text-2xl font-bold mt-5 mb-3 text-white">$1</h2>');
+    html = html.replace(/^# (.*?)$/gm, '<h1 class="text-3xl font-bold mt-6 mb-4 text-white">$1</h1>');
+
+    html = html.replace(/`([^`]+)`/g, '<code class="bg-bunker-700 text-cyan-400 rounded px-1 py-0.5 text-sm font-mono">$1</code>');
+
+    const lines = html.split('\n');
+    let result = '';
+    let inList = false;
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        if (line.match(/^\s*[-*]\s+/)) {
+            if (!inList) {
+                result += '<ul class="list-disc ml-6 my-3">';
+                inList = true;
+            }
+            result += '<li class="text-bunker-300 mb-1">' + line.replace(/^\s*[-*]\s+/, '') + '</li>';
+        } else {
+            if (inList) {
+                result += '</ul>';
+                inList = false;
+            }
+            if (line.trim()) {
+                result += '<p class="text-bunker-300 mb-3 leading-relaxed">' + line + '</p>';
+            } else {
+                result += '';
+            }
+        }
+    }
+
+    if (inList) {
+        result += '</ul>';
+    }
+
+    return result;
 };
 
 const suggestedTopics = [
@@ -118,11 +153,11 @@ const LessonPanel: React.FC<LessonPanelProps> = ({ lesson, isLoading, onGenerate
   }
 
   return (
-    <div className="p-8 bg-bunker-950 overflow-y-auto">
+    <div className="p-8 bg-bunker-950 overflow-y-auto h-full">
       <div className="max-w-3xl mx-auto">
         <h2 className="text-4xl font-extrabold text-white border-b-2 border-cyan-500/50 pb-3 mb-6">{lesson.title}</h2>
-        <div 
-          className="prose prose-invert max-w-none text-bunker-300 leading-relaxed space-y-4"
+        <div
+          className="max-w-none"
           dangerouslySetInnerHTML={{ __html: parseMarkdown(lesson.explanation) }}
         />
       </div>
